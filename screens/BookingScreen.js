@@ -1,13 +1,6 @@
-import React ,{Component} from "react";
-import {View, Text, StyleSheet, TouchableOpacity, FlatList, Image} from "react-native";
-import {Ionicons} from "@expo/vector-icons";
-import firebase, { auth } from 'firebase'
-import { Button } from "native-base";
-//import Fire from "../Fire";
-import { TextInput } from "react-native-gesture-handler";
-
-
-
+import React from 'react';
+import {View,Text,StyleSheet,AsyncStorage,FlatList} from 'react-native';
+import firebase from "firebase"
 
 var user = firebase.auth().currentUser;
   var name, email, photoUrl, uid, emailVerified;
@@ -21,157 +14,106 @@ var user = firebase.auth().currentUser;
                      // you have one. Use User.getToken() instead.
   }
 
-
-
-export default class BookingScreen extends React.Component{
-
-
+export default  class BookingScreen extends React.Component{
+   
     constructor(props){
-       
+        
         super(props);
-       
+      
         this.state=({
-            
-            
-            myid:uid,
-            newTaskName:'',
-            todoTasks:[],
-            subject:'',
-            bookingDate:'',
+            date:'',
             location:'',
-
-            date_local:'',
+            subject:'',
+            
+            
+            newTaskName:'',
+            book:[],
+            
             taskName:'',
             loading:false,
             descript:'',
             price:Number,
-            iid:props.navigation.state.params.json_list,
-            user_name:name
+            myid:''
         });
        
-        this.ref=firebase.firestore().collection('todoTasks').doc(this.state.iid).collection('reviews')
+        this.ref=firebase.firestore().collection('todoTasks').doc('1cv4qdZibhdtscNpx6keLz032cK2').collection('booked').doc(uid)
        
 
         
-       // this.ref=firebase.firestore().collection('todoTasks');
+       
     }
 
-
-
-
-  
-
-  
     componentDidMount(){
+        
         this.unsubscribe=this.ref.onSnapshot((querySnapshot)=>{
             const todos=[];
             
             querySnapshot.forEach((doc)=>{
                 todos.push({ 
-                    taskName:doc.data().name,
-                    subject:doc.data().subject,
-                    bookingDate:doc.data().bookingDate,
+                    date:doc.data().bookingDate,
                     location:doc.data().location,
-                    //bookingDate:doc.data().bookingDate,
-                   //myid:doc.id
+                    subject:doc.data().subject,
+                   //myid:doc.id,
+                   //tut:doc.id
                     
                 });
             });
             this.setState({
                 //todoTasks:todos,
-                todoTasks:todos,
+                book:todos,
                
                 loading:false,
             });
         })
-      
+
          
     };
 
-        
-   
 
 
 
-    
-
-
-   
 
     render(){
-
-       return(
+        return(
             <View style={styles.container}>
-                 <View style={styles.header}>
-                          <Text style={styles.headerTitle}>Reviews  </Text>
-                </View>
-               
-                
-      
-               
-                 
-     <FlatList style={styles.feed}
+            <View style={styles.header}>
+       <Text style={styles.headerTitle}>Tutors</Text> 
+            </View>
+
+
+       
+       
+        <FlatList style={styles.feed}
         showsVerticalScrollIndicator={false}
 
-
-         data={this.state.todoTasks}
-            renderItem={({item,index})=>{
-
+            
+         data={this.state.book}
+        renderItem={({item,index})=>{
             return(
                         
                 <View style={styles.feedItem}>
-                     
-                    <Text style={{ fontSize:20}}>{item.taskName}</Text>
-
-                               
-                                    <View style={styles.text} >
-                                         
-                                            
-                                    <Text style={{alignItems:'center'}}>
-                                                                {item.location}
-                                                                    </Text>
-                                                
-                                                 <Text>{item.bookingDate}</Text>
-                                               
-                                                 </View>
-                                                 <View style={styles.date} > 
-                                                     
-                                                </View>
-                 
-                                   
-                                                
-                                                                 
-                                                
-                 </View>
-                              
-                                                                    
+                    <Text>{item.location}</Text>
+         </View>
 
 
-                    )
-                        }}
-                    
-    ></FlatList>
-                    
-                    
 
+)
+    }}
 
-                    <Text style={{fontSize:20,alignSelf:"center" }} >Leave a review to tutor</Text>
+></FlatList>
+
+                
 
 
 
 
 
-            
-  
-    </View>
 
-            
+
+            </View>
         );
     }
 }
-
-
-
 
 
 
@@ -215,44 +157,33 @@ const styles =StyleSheet.create({
         borderRadius:5,
         padding:8,
         flexDirection:'row',
-        marginVertical:8
+        marginVertical:20
     },
-    text:{
-        width:"100%",
-        alignItems:'center',
-        marginVertical:10
+    avatar:{
+        width:36,
+        height:36,
+        borderRadius:18,
+        marginRight:16
     },
-    date:{
-        alignItems:"baseline"
-        
-       
 
-        
-    },
-    button:{
-        
-        
-        
-        
-        backgroundColor:'#05A586',
-        borderRadius:30,
-        justifyContent:'center',
-        alignItems:'center'
-      
-      },
-     
-     
-      goback:{
-        
+   
 
-        
-        
-        backgroundColor:'#034B5C',
-        borderRadius:30,
-        justifyContent:'center',
-        alignItems:'center'
-         
+   price:{
+       fontSize:24,
+       paddingTop:100,
+       paddingLeft:190
+   },
+   name:{
+       flex:1,
       
-      
-      }
-})
+       justifyContent:"center",
+       paddingLeft:30
+   },
+  
+   buttonText:{
+    alignSelf:"center",
+       color:'white',
+       fontSize:20,
+       fontWeight:'bold'
+   }
+});

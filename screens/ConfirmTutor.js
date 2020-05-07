@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { AppRegistry,Text, View, Button, StyleSheet ,TextInput,Linking,Alert,TouchableHighlight,Image} from 'react-native';
+import { AppRegistry,Text, View, Button, StyleSheet ,TextInput,AsyncStorage, Linking,Alert,TouchableHighlight,Image} from 'react-native';
 import DateTimePicker, {DateTimePickerModal} from "react-native-modal-datetime-picker"
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -100,6 +100,7 @@ export default class ConfirmTutor extends React.Component{
       alert("you add nothing ,please add");
       return
   }
+    
     let setWithOptions = this.ref.set({
       bookingDate: this.state.chosenDate,
       location:this.state.chosenPlace,
@@ -360,6 +361,7 @@ export default class ConfirmTutor extends React.Component{
 <TouchableOpacity style={styles.goback} onPress={()=> this.props.navigation.navigate("App")} >
                      <Text style={{fontSize:25,color:'white'}} >Go back to tutors</Text>
                  </TouchableOpacity>
+                 
     </View>
 
       

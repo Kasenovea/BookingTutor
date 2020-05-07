@@ -1,13 +1,11 @@
 import React from 'react';
-import {AppRegistry,Image,
-    StyleSheet, ActivityIndicator,
+import {
+    StyleSheet,
     FlatList,Text,
-     View,TouchableHighlight,
-     RefreshControl,TextInput,
-     Alert, Platform, ImageBackground,TouchableOpacity} from "react-native";
+     View,
+     
+     TouchableOpacity,BackHandler} from "react-native";
 import firebase from "firebase";
-import Fire from "../Fire";
-import { Item } from 'native-base';
 
 
 
@@ -33,23 +31,32 @@ export default class TutorScreen extends React.Component{
 
     constructor(props){
         super(props);
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state=({
-            //todoTasks:[],
-            //todoTasks:[],
+            
+            subject:'',
+            bookingDate:'',
+            location:'',
+            name:'',
+            phone:'',
+            myid:uid,
             newTaskName:'',
             todoTasks:[],
-            image:null,
+            date_local:'',
             taskName:'',
             loading:false,
-            subject:'',
-            id:'',
-            id:uid,
+            descript:'',
+            price:Number,
             
+            user_name:name
         });
+        this.ref=firebase.firestore().collection('todoTasks').doc(uid).collection('booked')
        
-        this.ref=firebase.firestore().collection('todoTasks').doc(this.state.id)
+       // this.ref=firebase.firestore().collection('todoTasks').doc(this.state.id)
        // this.ref=firebase.firestore().collection('todoTasks');
     }
+
+   
 
     componentDidMount(){
         this.unsubscribe=this.ref.onSnapshot((querySnapshot)=>{
@@ -57,9 +64,12 @@ export default class TutorScreen extends React.Component{
             
             querySnapshot.forEach((doc)=>{
                 todos.push({ 
-                    taskName:doc.data().subject,
-                    //taskName:doc.data().taskName,
-                    
+                    taskName:doc.data().name,
+                    bookingDate:doc.data().bookingDate,
+                    location:doc.data().location,
+                    subject:doc.data().subject,
+                    phone:doc.data().phone
+                   //myid:doc.id
                     
                 });
             });
@@ -70,110 +80,93 @@ export default class TutorScreen extends React.Component{
                 loading:false,
             });
         })
+      
+         
+    };
+   
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
-
-
-    onPressAdd=()=>{
-        if(this.state.newTaskName.trim()===''){
-            alert("you add nothing ,please add");
-            return
-        }
-        this.ref.add({
-            
-            taskName:this.state.newTaskName,
-            
-        }).then((data)=>{
-            console.log('added data=${data}');
-            this.setState({
-                newTaskName:'',
-                
-                loading:true
-            });
-
-        }).catch((error)=>{
-            console.log('erroraas')
-            this.setState({
-                newTaskName:'',
-                
-                loading:true
-            });
-
-        });
+    
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
+    handleBackButtonClick() {
+        this.props.navigation.goBack(null);
+        return true;
+    }
+   
 
     render(){
         return(
-            <View style={{flex:1, marginTop:Platform.OS==='android'     ?34:0}}>
+            <View style={styles.container}>
+            <View style={styles.header}>
+                  <Text style={styles.headerTitle}>For tutor</Text>
+            </View>
 
-                <View style={{
-                    backgroundColor:'tomato',
-                    flexDirection:'row',
-                    justifyContent:'flex-end',
-                    alignItems:'center',
-                    height:64
-                }}>
+            <TouchableOpacity style={{marginTop:10, backgroundColor:'#05A586', height:50,justifyContent:"center", alignSelf:'auto'}} onPress={() =>  this.props.navigation.navigate("BeTutor")}>
+      
+            <Text style={{alignSelf:"center",color:"white",fontSize:20}} >Propose tutoring</Text>
+      </TouchableOpacity>
+      
+      
+      <Text style={{alignSelf:"auto",marginTop:20, color:"white",height:30,fontSize:20,backgroundColor:"#778899"}} >Upcoming lessons for tutor</Text>
 
-                <TextInput style={{
-                    height:40,
-                    width:200,
-                    margin:10,
-                    padding:10,
-                    borderColor:"white",
-                    borderWidth:1,
-                    color:'white'
-                }}
-
-                keyboardType='default'
-                placeholderTextColor='black'
-                placeholder='enter taskname'
-                autoCapitalize='none'
-                onChangeText={
-                    (text)=>{
-                        this.setState({newTaskName:text});
-                    }
-                }
-                />
-
-                <TouchableHighlight
-                    style={{marginRight:10}}
-                    underlayColor='tomato'
-                    onPress={this.onPressAdd}
-                    >
-                        <Image
-                            style={{width:35,height:35}}
-                            source={require('../assets/ava3.jpg')}/>
-                    </TouchableHighlight>
+<FlatList style={styles.feed}
+        showsVerticalScrollIndicator={false}
 
 
-                </View>
+         data={this.state.todoTasks}
+            renderItem={({item,index})=>{
+
+            return(
+                        
+                <View style={styles.feedItem}>
+                     
+                    
+                    <Text style={{ fontSize:20}}>{item.taskName}</Text>
+                                
+                            <View  style={{  flexDirection:"row"}} >      
+                                        
+                 
+                                <Text style={{ fontSize:15}} >{'\n'}subject:{item.subject}</Text>
+                                <Text style={{ fontSize:15}}>{'\n'}            location:{item.location}</Text>
+
+                           
+                           
+                            </View>
+                            <Text style={{fontSize:18, alignSelf:"center",alignItems:"flex-start"}}>{'\n'}{'\n'} Booking date: {item.bookingDate}</Text>
+
+                 </View>
+              
+         
+                 
+                                   
+                                                
+                                                                 
+                  
+                              
+                                                                    
+
+
+                    )
+                        }}
+                    
+    ></FlatList>
+                    
+     
+              
+
+              
+
+
+
+               
 
                 
                
-                <FlatList
-
-                    //data={this.state.todoTasks}
-                    data={this.state.todoTasks}
-                    renderItem={({item,index})=>{
-                        return(
-                        
-
-
-                            <Text style={{
-                                fontSize:20,
-                                fontWeight:'bold',
-                                margin:40,
-                                underlayColor:'tomato'
-                             }}> {item.taskName}</Text> 
-
-
-
-
-
-                        )
-                        }}
-                        //keyExtractor={(item,index)=>item.taskName}
-                    ></FlatList>
-            </View>
+</View>     
         )
     }
    }
@@ -181,3 +174,79 @@ export default class TutorScreen extends React.Component{
 
 
 
+   const styles =StyleSheet.create({
+    container:{
+        flex:1,
+        //justifyContent:'center',
+        backgroundColor:'#EFECF4'
+    },
+    header:{
+        paddingTop:34,
+        paddingBottom:6,
+        backgroundColor:'#7AD0FF',
+        alignItems:'center',
+        justifyContent:'center',
+        borderBottomColor:'#EBECF4',
+        borderBottomWidth:1,
+        shadowColor:"#454D65",
+        shadowOffset:{height:5},
+        shadowRadius:15,
+        shadowOpacity:0.2,
+        zIndex:10
+    },
+    headerTitle:{
+        fontSize:20,
+        fontWeight:'500',
+        color:'white',
+        fontWeight:'bold',
+        borderBottomWidth:1
+
+    },
+    descript:{
+        justifyContent:'center',
+        fontSize:20
+    },
+    headerTitle:{
+        fontSize:20,
+        fontWeight:'500',
+        color:'white',
+        fontWeight:'bold',
+        borderBottomWidth:1
+
+    },
+    
+    feedItem:{
+        backgroundColor:'#FFF',
+        borderRadius:5,
+        padding:8,
+        //flexDirection:'row',
+        marginVertical:8,
+        height:200
+    },
+    button:{
+        
+        
+        
+        
+        backgroundColor:'#05A586',
+        //borderRadius:15,
+        justifyContent:'center',
+        alignItems:'center'
+      
+      },
+     
+     
+      goback:{
+        
+
+        
+        
+        backgroundColor:'#034B5C',
+        //borderRadius:30,
+        justifyContent:'center',
+        alignItems:'center'
+         
+      
+      
+      }
+})

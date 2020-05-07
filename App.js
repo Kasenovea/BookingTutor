@@ -48,7 +48,7 @@ const AppTabNavigator=createBottomTabNavigator(
                 tabBarIcon:({tintColor})=><Ionicons name="ios-home" size={24} color={tintColor}/>
             }
         },
-        Search:{
+        forTutor:{
             screen:TutorScreen,
             navigationOptions:{
                 tabBarIcon:({tintColor})=><Ionicons name="ios-search" size={24} color={tintColor}/>
@@ -93,7 +93,7 @@ export default createAppContainer(
     createSwitchNavigator(
         {
             Loading:LoadingScreen,
-           
+            Tutor:TutorScreen,
             App:AppTabNavigator,
             Auth:AuthStack,
             BeTutor:BeTutorScreen,
@@ -101,7 +101,8 @@ export default createAppContainer(
             Home:HomeScreen,
             ReviewScreen:ReviewScreen,
             Profile:ProfileScreen,
-            BookedTutorScreen:BookedTutorScreen
+            BookedTutorScreen:BookedTutorScreen,
+            BookingScreen:BookingScreen
         },
         {
             initialRouteName:'Loading'

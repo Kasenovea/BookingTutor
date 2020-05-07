@@ -1,5 +1,5 @@
 import React ,{Component} from "react";
-import {View, Text, StyleSheet, TouchableOpacity, FlatList, Image} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, BackHandler,Image} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import firebase, { auth } from 'firebase'
 import { Button } from "native-base";
@@ -29,7 +29,7 @@ export default class BookedTutorScreen extends React.Component{
     constructor(props){
        
         super(props);
-       
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state=({
             
             subject:'',
@@ -93,7 +93,18 @@ export default class BookedTutorScreen extends React.Component{
 
 
 
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
     
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+    
+    handleBackButtonClick() {
+        this.props.navigation.goBack(null);
+        return true;
+    }
 
 
    

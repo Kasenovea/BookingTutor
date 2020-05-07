@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View,TouchableOpacity,StyleSheet,TouchableHighlight,Modal,Alert } from 'react-native';
+import { Text, View,TouchableOpacity,StyleSheet,TouchableHighlight,Modal,Alert,TextInput } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import { Button } from 'native-base';
 import Fire from "../Fire"
@@ -9,9 +9,10 @@ import firebase from "firebase"
 
 
 
+
 var user = firebase.auth().currentUser;
   var name, email, photoUrl, uid, emailVerified;
-  
+ 
   if (user != null) {
     name = user.displayName;
     email = user.email;
@@ -23,10 +24,12 @@ var user = firebase.auth().currentUser;
 
 export default class ProfileScreen extends Component {
 
-  state = {
-    modalPolicy: false,
-    modalCompany:false,
-  };
+  
+
+
+
+
+ 
 
   showPolicy(visible) {
     this.setState({modalPolicy: visible});
@@ -35,15 +38,47 @@ showCompany(visible){
   this.setState({modalCompany:visible})
 }
 
+constructor(props){
+  super(props);
+  this.state={
+    newPassword:'',
+    newEmail: "",
+    currentPassword: "",
+
+      modalPolicy: false,
+      modalCompany:false,
+    
+  }
+}
 
 
+// Reauthenticates the current user and returns a promise...
+reauthenticate = (currentPassword) => {
+  var user = Fire.currentUser;
+  var cred = firebase.auth().EmailAuthProvider.credential(user.email, currentPassword);
+  return user.reauthenticateWithCredential(cred);
+}
 
 
+// Changes user's password...
+onChangePasswordPress = () => {
+  this.reauthenticate(this.state.currentPassword).then(() => {
+    var user = Fire.currentUser;
+    user.updatePassword(this.state.newPassword).then(() => {
+      Alert.alert("Password was changed");
+    }).catch((error) => { console.log(error.message); });
+  }).catch((error) => { console.log(error.message) });
+}
 
-
-
-
-
+// Changes user's email...
+onChangeEmailPress = () => {
+  this.reauthenticate(this.state.currentPassword).then(() => {
+    var user = Fire.currentUser;
+    user.updateEmail(this.state.newEmail).then(() => {
+      Alert.alert("Email was changed");
+    }).catch((error) => { console.log(error.message); });
+  }).catch((error) => { console.log(error.message) });
+}
 
 
 
@@ -67,9 +102,9 @@ showCompany(visible){
           transparent={false}
           visible={this.state.modalPolicy}
          >
-            <View style={{marginTop: 22}}> 
+            <View style={{marginTop: 22,backgroundColor:"silver" }}> 
                 <View>
-                    <Text >[Developer/Company name] built the [App Name] app as [open source/free/freemium/ad-supported/commercial] app. This SERVICE is provided by [Developer/Company name] [at no cost] and is intended for use as is.
+                    <Text  >[Developer/Company name] built the [App Name] app as [open source/free/freemium/ad-supported/commercial] app. This SERVICE is provided by [Developer/Company name] [at no cost] and is intended for use as is.
 
 This page is used to inform visitors regarding [my/our] policies with the collection, use, and disclosure of Personal Information if anyone decided to use [my/our] Service.
 
@@ -81,7 +116,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
                         onPress={() => {
                         this.showPolicy(!this.state.modalPolicy);
                          }}>
-                        <Text style={{justifyContent:"flex-end"}}>Close </Text>
+                        <Text style={{justifyContent:"flex-end",fontSize:20,fontWeight:"bold"}}>Close </Text>
                   </TouchableHighlight>
                 </View>
             </View>
@@ -92,7 +127,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
                 transparent={false}
                 visible={this.state.modalCompany}
                 >
-              <View style={{marginTop: 22}}>
+              <View  style={{marginTop: 22,backgroundColor:"silver" }}>
                   <View>
                       <Text>Круглосуточная служба поддержки клиентов и приём заказов:
                           телефон: +7 (495) 777-54-44
@@ -114,8 +149,9 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
                         <TouchableHighlight
                             onPress={() => {
                             this.showCompany(!this.state.modalCompany);
-                            }}>
-                            <Text style={{justifyContent:"flex-end"}}>Close </Text>
+                            }
+                            }>
+                            <Text style={{justifyContent:"flex-end",fontSize:20,fontWeight:"bold"}}>Close </Text>
                         </TouchableHighlight>
                   </View>
                </View>
@@ -126,8 +162,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
         
 
-
-
+         
         
 
 
@@ -144,9 +179,13 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
                 <Text>your name is:{name}</Text>
 
           </View>
+        <Text style={{paddingTop:20,borderTopWidth:2}}>Type here a new Email to change</Text>
+        <TextInput style={styles.textInput} value={this.state.newEmail}
+          placeholder="New Email" autoCapitalize="none" keyboardType="email-address"
+          onChangeText={(text) => { this.setState({newEmail: text}) }}
+        />
 
-        
-
+        <Button style={{backgroundColor:'silver'}} onPress={this.onChangeEmailPress} ><Text>Change the email</Text></Button>
 
 
 
@@ -154,21 +193,26 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
             
             <Text>company contacts</Text>
       </Button>
+      <Text style={{paddingTop:30,borderTopWidth:2}} >Type here your password to change</Text>
+      <TextInput style={styles.textInput} value={this.state.currentPassword}
+          placeholder="Current Password" autoCapitalize="none" secureTextEntry={true}
+          onChangeText={(text) => { this.setState({currentPassword: text}) }}
+        />
 
-        
+        <TextInput style={styles.textInput} value={this.state.newPassword}
+          placeholder="New Password" autoCapitalize="none" secureTextEntry={true}
+          onChangeText={(text) => { this.setState({newPassword: text}) }}
+        />
+
+        <Button  style={{backgroundColor:'silver'}} onPress={this.onChangePasswordPress}><Text>Change the password</Text></Button>
+
+      
 
       <Button style={styles.row1} onPress={() => { this.showPolicy(true);}}>
             
             <Text>Legacy ,policy of application</Text>
       </Button>
-      <Button style={styles.row3} onPress={() =>  this.props.navigation.navigate("BeTutor")}>
-      
-            <Text>Tutor's screen</Text>
-      </Button>
-      <Button style={styles.row3} onPress={() =>  this.props.navigation.navigate("BookedTutorScreen")}>
-      
-            <Text>Tutor's upcoming lessons</Text>
-      </Button>
+     
       
       <Button style={styles.row} onPress={()=>{Fire.shared.signOut()}} ><Ionicons name="ios-log-out" size={30} color={"black"}/><Text style={{fontSize:20}}>Logout from application</Text></Button>  
          
@@ -221,7 +265,7 @@ row3:{
 },
 greeting:{
   paddingTop:10,
-  backgroundColor:"#FFDCB2",
+  backgroundColor:"#86B9FE",
 alignItems:'center'
 },
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry,Text, View, Button, StyleSheet ,TextInput,Linking,Alert,TouchableHighlight,Image, ListView} from 'react-native';
+import { AppRegistry,Text, View, Button, StyleSheet ,TextInput,Linking,Alert,TouchableHighlight,Image, ListView,BackHandler} from 'react-native';
 import DateTimePicker, {DateTimePickerModal} from "react-native-modal-datetime-picker"
 //import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 //import { createStackNavigator } from 'react-navigation-stack';
@@ -31,6 +31,7 @@ export default class BeTutorScreen extends React.Component{
 
   constructor(props){
       super(props)
+      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
       this.inputRefs={}
       this.state={
         
@@ -141,7 +142,10 @@ export default class BeTutorScreen extends React.Component{
 
 
 
-
+handleBackButtonClick() {
+  this.props.navigation.goBack(null);
+  return true;
+}
 
 
 
@@ -396,9 +400,8 @@ export default class BeTutorScreen extends React.Component{
 
 
 
-
 <TouchableOpacity style={styles.goback} onPress={()=> this.props.navigation.navigate("App")} >
-                     <Text style={{fontSize:25,color:'white'}} >Go back to tutors</Text>
+                     <Text style={{fontSize:25,color:'white'}} >Go back home </Text>
                  </TouchableOpacity>
     </View>
 

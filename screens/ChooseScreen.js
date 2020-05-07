@@ -16,20 +16,7 @@ export default class ChooseScreen extends React.Component{
                  
                  <StatusBar barStyle='light-content'></StatusBar>
  
-                 {/* {<Image 
-                     source={require('../assets/authHeader.png')}
-                     style={{marginTop:-176, marginLeft:-50}}
-                 ></Image> */}
- 
-                 {/* <Image
-                     source={require('../assets/authFooter.png')}
-                     style={{position:'absolute',bottom:-325,right:-225}}
-                 ></Image>
- 
-                 <Image
-                     source={require('../assets/logo.png')}
-                     style={{marginTop:-110, alignSelf:'center'}}
-                 ></Image> */}
+                
  
  
  
@@ -42,16 +29,24 @@ export default class ChooseScreen extends React.Component{
                  
                  
                  <TouchableOpacity style={styles.button} onPress={()=> this.props.navigation.navigate("RegisterTutor")}>
-                     <Text style={{ color:'#FFF', fontWeight:'500'}}>Tutor</Text>
+                     <Text style={{ color:'#FFF', fontSize:20,fontWeight:"bold"}}>Tutor</Text>
                  </TouchableOpacity>
 
                  
 
 
                  <TouchableOpacity style={styles.button} onPress={()=> this.props.navigation.navigate("Login")} >
-                     <Text style={{color:'#FFF', fontWeight:'500'}}>Parent</Text>
+                     <Text style={{color:'#FFF',fontSize:20, fontWeight:"bold"}}>Student</Text>
                  </TouchableOpacity>
                  
+
+
+         <Text style={{paddingTop:200, alignSelf:"flex-start"}} >press Tutor button if you are tutor
+
+                 </Text>
+                 <Text style={{ alignSelf:"flex-start"}} >press Student button if you are looking for a tutor
+
+                 </Text>
             </View>
         )
     }
@@ -64,6 +59,7 @@ export default class ChooseScreen extends React.Component{
 const styles=StyleSheet.create({
      container:{
          flex:1,
+         backgroundColor:"#EFECF4"
     },
  
      greeting:{
@@ -75,13 +71,13 @@ const styles=StyleSheet.create({
  
     
      button:{
-         paddingTop:50,
+         paddingTop:10,
          marginTop:50,
          marginHorizontal:30,
-         backgroundColor:'#E9446A',
+         backgroundColor:'#05A586',
          borderRadius:4,
          height:52,
          alignItems:'center',
-         justifyContent:"flex-end"
+         justifyContent:"center"
      }
 });  
