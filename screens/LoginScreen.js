@@ -1,22 +1,29 @@
-import React,{ useState } from 'react';
-import {View,Text, StyleSheet,StatusBar,Image,Button} from 'react-native';
+import React,{ useState,useEffect } from 'react';
+import {AsyncStorage, View,Text, StyleSheet,StatusBar,Image,Button} from 'react-native';
 import { TextInput, TouchableOpacity, } from 'react-native-gesture-handler';
 import  firebase from 'firebase';
-
+import * as Facebook from 'expo-facebook'
 console.disableYellowBox = true;
 
-
-
-
+import * as Google from "expo-google-app-auth"
 
 
 
 
 export default class LoginScreen extends React.Component{
-    
-    
+   
 
 
+
+
+
+
+
+
+
+
+
+    
     state={
        
         email:'',
@@ -24,8 +31,17 @@ export default class LoginScreen extends React.Component{
         errorMessage:null
     };
    
-
     
+    componentDidMount(){
+        firebase.auth().onAuthStateChanged((user)=>{
+            if(user!=null){
+                console.log(user)
+            }
+        })
+    }
+
+
+
     hadleLogin=()=>{
         const {email,password}=this.state
         firebase
@@ -36,8 +52,58 @@ export default class LoginScreen extends React.Component{
 
     
 
-    render()
+
     
+        async  logIn() {
+            try {
+              await Facebook.initializeAsync('254913562402787');
+              const {
+                type,
+                token,
+                expires,
+                permissions,
+                declinedPermissions,
+              } = await Facebook.logInWithReadPermissionsAsync({
+                permissions: ['public_profile'],
+              });
+              if (type === 'success') {
+                // Get the user's name using Facebook's Graph API
+                const credential=firebase.auth.FacebookAuthProvider.credential(token)
+                firebase.auth().signInWithCredential(credential)
+               // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+                //Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+              } else {
+                // type === 'cancel'
+              }
+            } catch ({ message }) {
+              alert(`Facebook Login Error: ${message}`);
+            }
+          }
+
+
+         async logen  () {
+            try {
+              const result = await Google.logInAsync({
+                androidClientId: 295072493392-ssf8n83ufg953voho53fulf6rhp6uqtu.apps.googleusercontent.com,
+                scopes: ['profile', 'email'],
+              });
+          
+              if (result.type === 'success') {
+
+                const credential=firebase.auth.GoogleAuthProvider.credential(token)
+                firebase.auth().signInWithCredential(credential)
+              } else {
+                return { cancelled: true };
+              }
+            } catch (e) {
+              return { error: true };
+            }
+          }
+
+
+
+
+    render()
     
     
     
@@ -48,19 +114,30 @@ export default class LoginScreen extends React.Component{
     {
 
 
-
-
-
        
         return(
+
             
             <View style={styles.container}>
-                
-                <StatusBar barStyle='light-content'></StatusBar>
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
               
 
-
+                
 
                 <Text style={styles.greeting}>
                     {'Hello  \nWelcome to MiTutor \nto continue sign in please'}
@@ -102,22 +179,29 @@ export default class LoginScreen extends React.Component{
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={this.hadleLogin} >
-                    <Text style={{color:'#FFF', fontWeight:'500'}}>Sign 0n</Text>
+                    <Text style={{color:'#FFF', fontWeight:'500'}}>Sign in</Text>
                 </TouchableOpacity>
               
-               
+
                 
-                <TouchableOpacity style={{alignSelf:'center', marginTop:32}} onPress={()=>this.props.navigation.navigate("Register")}>
+                <TouchableOpacity style={{alignSelf:'center', marginTop:12}} onPress={()=>this.props.navigation.navigate("Register")}>
 
                     <Text style={{color:'#414959', fontSize:13}}>
                         new to social? <Text style={{fontWeight:'500',color:'#05A586'}}>Register</Text>
                     </Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.button}  >
-                    <Text style={{color:'#FFF', fontWeight:'500'}}>Facddebook</Text>
+                <TouchableOpacity style={{backgroundColor:'#3B5998',alignItems:"center",marginTop:32 }}
+                onPress={()=>this.logen()}
+                                >
+                    <Text style={{color:'#FFF', height:30, fontWeight:'500'}}>Sign in with Facebook</Text>
                 </TouchableOpacity>
-              
+
+                <TouchableOpacity style={{backgroundColor:'#176BEF',alignItems:"center"}} 
+                onPress={()=>this.logIn()}
+                >
+                    <Text style={{color:'#FFF', height:30,fontWeight:'500'}}>Sign in with Google</Text>
+                </TouchableOpacity>
 
 
             </View>
@@ -130,17 +214,7 @@ export default class LoginScreen extends React.Component{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 const styles=StyleSheet.create({

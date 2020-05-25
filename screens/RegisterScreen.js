@@ -104,7 +104,7 @@ export default class RegisterScreen extends React.Component{
                     onPress={()=>this.props.navigation.navigate("Login")}>
 
                     <Text style={{color:'#414959', fontSize:13}}>
-                        Already have account? <Text style={{fontWeight:'500',color:'#E9446A'}}>Login</Text>
+                        Already have account? <Text style={{fontWeight:'500',color:'#05A586'}}>Login</Text>
                     </Text>
                 </TouchableOpacity>
 
@@ -150,7 +150,7 @@ const styles=StyleSheet.create({
     },
     button:{
         marginHorizontal:30,
-        backgroundColor:'#E9446A',
+        backgroundColor:'#05A586',
         borderRadius:4,
         height:52,
         alignItems:'center',

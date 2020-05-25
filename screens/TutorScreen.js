@@ -2,10 +2,12 @@ import React from 'react';
 import {
     StyleSheet,
     FlatList,Text,
-     View,
+     View,TextInput,
+     Linking,
      
      TouchableOpacity,BackHandler} from "react-native";
 import firebase from "firebase";
+import { Button } from 'native-base';
 
 
 
@@ -33,7 +35,8 @@ export default class TutorScreen extends React.Component{
         super(props);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state=({
-            
+            mobile_no:'',
+            msg:'zczczczc',
             subject:'',
             bookingDate:'',
             location:'',
@@ -47,6 +50,7 @@ export default class TutorScreen extends React.Component{
             loading:false,
             descript:'',
             price:Number,
+            mob_no:'',
             
             user_name:name
         });
@@ -56,7 +60,7 @@ export default class TutorScreen extends React.Component{
        // this.ref=firebase.firestore().collection('todoTasks');
     }
 
-   
+  
 
     componentDidMount(){
         this.unsubscribe=this.ref.onSnapshot((querySnapshot)=>{
@@ -68,7 +72,7 @@ export default class TutorScreen extends React.Component{
                     bookingDate:doc.data().bookingDate,
                     location:doc.data().location,
                     subject:doc.data().subject,
-                    phone:doc.data().phone
+                    phone:doc.data().phone,
                    //myid:doc.id
                     
                 });
@@ -97,7 +101,25 @@ export default class TutorScreen extends React.Component{
         return true;
     }
    
-
+    sendOnWhatsApp=() => {
+        let msg = this.state.msg;
+        let mobile = this.state.mobile_no;
+        if(mobile){
+          if(msg){
+            let url = 'whatsapp://send?text=' + this.state.msg + '&phone=+7' + this.state.mobile_no;
+            Linking.openURL(url).then((data) => {
+              console.log('WhatsApp Opened');
+            }).catch(() => {
+              alert('Make sure Whatsapp installed on your device');
+            });
+          }else{
+            alert('Please insert message to send');
+          }
+        }else{
+          alert('Please insert mobile no');
+        }
+      }
+    
     render(){
         return(
             <View style={styles.container}>
@@ -119,6 +141,7 @@ export default class TutorScreen extends React.Component{
 
          data={this.state.todoTasks}
             renderItem={({item,index})=>{
+                this.state.mobile_no=item.phone
 
             return(
                         
@@ -133,24 +156,46 @@ export default class TutorScreen extends React.Component{
                                 <Text style={{ fontSize:15}} >{'\n'}subject:{item.subject}</Text>
                                 <Text style={{ fontSize:15}}>{'\n'}            location:{item.location}</Text>
 
-                           
+
                            
                             </View>
+                            <View style={styles.container}>
+
                             <Text style={{fontSize:18, alignSelf:"center",alignItems:"flex-start"}}>{'\n'}{'\n'} Booking date: {item.bookingDate}</Text>
+            <Text style={{alignSelf:"center", fontSize:18}}>Phone number {item.phone}</Text>
+        <Text style={{textAlign: 'center', fontSize: 20}}>
+          Click button to contact student
+        </Text>
+     
+        
+        <View style={{marginTop:20}}>
+          <Button
+          style={{backgroundColor:"green",justifyContent:"center"}}
+            onPress={this.sendOnWhatsApp}
+            title= 'Send WhatsApp Message'
+            ><Text style={{color:"white", fontSize:18}}>Submit
+               </Text></Button>
+        </View>
+      </View>
 
-                 </View>
+
+
+
               
-         
-                 
-                                   
-                                                
-                                                                 
-                  
-                              
-                                                                    
-
-
-                    )
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+                 </View>  )
                         }}
                     
     ></FlatList>
@@ -216,12 +261,12 @@ export default class TutorScreen extends React.Component{
     },
     
     feedItem:{
-        backgroundColor:'#FFF',
+        backgroundColor:'white',
         borderRadius:5,
         padding:8,
         //flexDirection:'row',
         marginVertical:8,
-        height:200
+        height:300
     },
     button:{
         

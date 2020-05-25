@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Text, View,TouchableOpacity,StyleSheet,TouchableHighlight,Modal,Alert,TextInput } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import { Button } from 'native-base';
-import Fire from "../Fire"
 import firebase from "firebase"
+
 
 
 
@@ -54,7 +54,7 @@ constructor(props){
 
 // Reauthenticates the current user and returns a promise...
 reauthenticate = (currentPassword) => {
-  var user = Fire.currentUser;
+  var user = firebase.auth().currentUser;
   var cred = firebase.auth().EmailAuthProvider.credential(user.email, currentPassword);
   return user.reauthenticateWithCredential(cred);
 }
@@ -63,7 +63,7 @@ reauthenticate = (currentPassword) => {
 // Changes user's password...
 onChangePasswordPress = () => {
   this.reauthenticate(this.state.currentPassword).then(() => {
-    var user = Fire.currentUser;
+    var user = firebase.auth().currentUser;
     user.updatePassword(this.state.newPassword).then(() => {
       Alert.alert("Password was changed");
     }).catch((error) => { console.log(error.message); });
@@ -73,7 +73,7 @@ onChangePasswordPress = () => {
 // Changes user's email...
 onChangeEmailPress = () => {
   this.reauthenticate(this.state.currentPassword).then(() => {
-    var user = Fire.currentUser;
+    var user = firebase.auth().currentUser;
     user.updateEmail(this.state.newEmail).then(() => {
       Alert.alert("Email was changed");
     }).catch((error) => { console.log(error.message); });
@@ -214,7 +214,9 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
       </Button>
      
       
-      <Button style={styles.row} onPress={()=>{Fire.shared.signOut()}} ><Ionicons name="ios-log-out" size={30} color={"black"}/><Text style={{fontSize:20}}>Logout from application</Text></Button>  
+      <Button style={styles.row} onPress={()=>{ 
+    firebase.auth().signOut();
+  }} ><Ionicons name="ios-log-out" size={30} color={"black"}/><Text style={{fontSize:20}}>Logout from application</Text></Button>  
          
 
 </View>

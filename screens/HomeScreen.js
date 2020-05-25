@@ -117,7 +117,6 @@ export default class HomeScreen extends React.Component{
             
          data={this.state.todoTasks}
         renderItem={({item,index})=>{
-            global.tutid=item.myid
             return(
                         
                 <View style={styles.feedItem}>
