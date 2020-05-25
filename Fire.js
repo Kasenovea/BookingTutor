@@ -13,22 +13,7 @@ class Fire {
       `photos/${this.uid}/${Date.now()}`
     );
 
-    return new Promise((res, rej) => {
-      this.firestore
-        .collection('posts')
-        .add({
-          text,
-          uid: this.uid,
-          timestamp: this.timestamp,
-         
-        })
-        .then(ref => {
-          res(ref);
-        })
-        .catch(error => {
-          rej(error);
-        });
-    });
+   
   };
 
   // uploadPhotoAsync = async (uri, filename) => {

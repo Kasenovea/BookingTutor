@@ -12,7 +12,6 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import BookingScreen from './screens/BookingScreen';
-import SearchScreen from './screens/SearchScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import TutorScreen from './screens/TutorScreen'
 
@@ -33,7 +32,7 @@ import Fire from "./Fire"
 
   
 
-  
+
 
 
 // const AppStack=createStackNavigator({
